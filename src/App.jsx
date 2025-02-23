@@ -1,34 +1,93 @@
-import { useState } from "react"
-import reactLogo from "./assets/react.svg"
-import viteLogo from "/vite.svg"
+import axios from "axios"
+import { useEffect, useState } from "react"
+import Markdown from "react-markdown"
 import "./App.css"
 
+const TOKEN =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI1NDU2NDBlLTZmMWUtNGY0Ny1hNGIwLWFhYzI1MjZkZTU1MSIsImVtYWlsIjoiIiwiaWF0IjoxNzQwMjk5ODQ1fQ.YINPJ5g_oU7aEPgfhnffq4SHAP0La7X2T8Ti8dFwZu0"
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [input, setInput] = useState("")
+  const [messages, setMessages] = useState([])
+
+  const sendMessages = async () => {
+    setMessages([
+      ...messages,
+      {
+        input,
+        reply: "Loading...",
+      },
+    ])
+
+    const response = await axios.post(
+      "http://localhost:3000/chatbot/send-message",
+      {
+        userInput: input,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      }
+    )
+
+    setMessages([
+      ...messages.slice(0, messages.length - 1),
+      {
+        input: response.data.data.userInput,
+        reply: response.data.data.botReply,
+      },
+    ])
+
+    setInput("")
+  }
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/chatbot/get-chats", {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      })
+      .then((response) => {
+        setMessages(
+          response.data.data.map((data) => ({
+            input: data.userInput,
+            reply: data.botReply,
+          }))
+        )
+      })
+  }, [])
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="flex flex-col gap-6 max-w-2xl pb-32">
+      {messages.map((message, index) => (
+        <div key={index} className="flex flex-col gap-12 text-left">
+          <div className="pl-10 flex justify-end">
+            <p className="max-w-md bg-white/10 px-6 pt-3 pb-4 rounded-3xl rounded-tr-sm whitespace-pre-wrap">
+              {message.input}
+            </p>
+          </div>
+
+          <div className="pr-10 whitespace-pre-wrap">
+            <Markdown>{message.reply}</Markdown>
+          </div>
+        </div>
+      ))}
+
+      <div className="fixed bottom-0 left-0 right-0 bg-[#1B1C1D] py-4">
+        <div className="mx-auto max-w-2xl w-full flex items-center gap-4">
+          <input
+            type="text"
+            placeholder="Type something..."
+            className="border border-white/25 rounded-4xl px-8 pt-3 pb-4 outline-none resize-none flex-1"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
+          <button onClick={sendMessages}>Kirim</button>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
