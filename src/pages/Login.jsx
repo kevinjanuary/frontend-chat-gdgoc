@@ -13,10 +13,13 @@ const Login = () => {
     e.preventDefault()
 
     try {
-      const response = await axios.post("http://localhost:3000/users/login", {
-        email,
-        password,
-      })
+      const response = await axios.post(
+        "https://chatbot-gdgoc.up.railway.app/users/login",
+        {
+          email,
+          password,
+        }
+      )
 
       session.setToken(response.data.data.token)
       navigate("/")

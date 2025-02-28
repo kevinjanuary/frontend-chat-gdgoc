@@ -15,7 +15,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/users/register",
+        "https://chatbot-gdgoc.up.railway.app/users/register",
         {
           name,
           email,

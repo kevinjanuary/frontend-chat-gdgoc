@@ -29,7 +29,7 @@ function App() {
     ])
 
     const response = await axios.post(
-      "http://localhost:3000/chatbot/send-message",
+      "https://chatbot-gdgoc.up.railway.app/chatbot/send-message",
       {
         userInput: input,
       },
@@ -60,7 +60,7 @@ function App() {
     }
 
     axios
-      .get("http://localhost:3000/chatbot/get-chats", {
+      .get("https://chatbot-gdgoc.up.railway.app/chatbot/get-chats", {
         headers: {
           Authorization: `Bearer ${token}`,
           // Authorization: `Bearer ${TOKEN}`,
@@ -77,7 +77,7 @@ function App() {
   }, [navigate])
 
   return (
-    <div className="flex flex-col gap-6 max-w-2xl pb-32">
+    <div className="flex flex-col gap-6 max-w-2xl pb-32 w-full h-[calc(100vh-4rem)]">
       {messages.map((message, index) => (
         <div key={index} className="flex flex-col gap-12 text-left">
           <div className="pl-10 flex justify-end">
