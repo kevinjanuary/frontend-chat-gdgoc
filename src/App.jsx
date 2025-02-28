@@ -77,7 +77,7 @@ function App() {
   }, [navigate])
 
   return (
-    <div className="flex flex-col gap-6 max-w-2xl pb-32 w-full h-[calc(100vh-4rem)]">
+    <div className="flex flex-col gap-6 max-w-2xl pb-32 w-full min-h-[calc(100vh-4rem)]">
       {messages.map((message, index) => (
         <div key={index} className="flex flex-col gap-12 text-left">
           <div className="pl-10 flex justify-end">
